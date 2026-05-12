@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Kasir Coffeeshop</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111b33;
+      --muted: #8aa0c2;
+      --text: #e8f1ff;
+      --primary: #4f8cff;
+      --danger: #ff4f6d;
+      --ok: #35d07f;
+      --border: rgba(255, 255, 255, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 10% 0%, #14244a 0%, var(--bg) 55%);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: rgba(17, 27, 51, 0.7);
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brand .title {
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      font-size: 16px;
+    }
+    .brand .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      background: rgba(17, 27, 51, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .panel .panel-h {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel .panel-h h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .panel .panel-b {
+      padding: 14px 16px;
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .card .label { color: var(--muted); font-size: 12px; }
+    .card .value { font-size: 20px; font-weight: 800; margin-top: 6px; }
+    .card .trend { color: var(--muted); font-size: 12px; margin-top: 6px; }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input, select, button {
+      font: inherit;
+    }
+
+    .form-control {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 160px;
+      flex: 1;
+    }
+
+    .form-control label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-control input, .form-control select {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.02s ease, background 0.15s ease;
+    }
+    .btn:hover { background: rgba(255,255,255,0.08); }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary { border-color: rgba(79, 140, 255, 0.5); background: rgba(79,140,255,0.16); }
+    .btn-danger { border-color: rgba(255,79,109,0.5); background: rgba(255,79,109,0.14); }
+    .btn-ok { border-color: rgba(53,208,127,0.5); background: rgba(53,208,127,0.14); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    th { color: var(--muted); font-weight: 600; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .qty {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qty button {
+      padding: 6px 10px;
+      border-radius: 10px;
+    }
+
+    .side-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .totals {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .total-line {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .total-line strong { color: var(--text); }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      display: none;
+      max-width: 320px;
+    }
+
+    .toast.show { display: block; }
+
+    .footer-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="title">Dashboard Kasir Coffeeshop</div>
+        <div class="subtitle">POS ringan (contoh) • Simpan data lokal (localStorage)</div>
+      </div>
+      <div class="pill" id="clock">—</div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Kasir</h2>
+          <div class="actions">
+            <button class="btn btn-danger" id="btnClearCart">Kosongkan</button>
+            <button class="btn btn-primary" id="btnPay">Bayar</button>
+          </div>
+        </div>
+        <div class="panel-b">
+          <div class="kpi">
+            <div class="card">
+              <div class="label">Total Hari Ini</div>
+              <div class="value" id="kpiToday">Rp 0</div>
+              <div class="trend" id="kpiTodayTrend">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Transaksi</div>
+              <div class="value" id="kpiTx">0</div>
+              <div class="trend">per hari (lokal)</div>
+            </div>
+            <div class="card">
+              <div class="label">Item Terjual</div>
+              <div class="value" id="kpiItems">0</div>
+              <div class="trend">akumulasi</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-control" style="max-width: 340px;">
+              <label for="productSelect">Pilih Produk</label>
+              <select id="productSelect"></select>
+            </div>
+            <div class="form-control" style="max-width: 240px;">
+              <label for="qtyInput">Jumlah</label>
+              <input id="qtyInput" type="number" min="1" value="1" />
+            </div>
+            <button class="btn btn-ok" id="btnAdd">Tambah ke Keranjang</button>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Produk</th>
+                <th style="width: 14%">Harga</th>
+                <th style="width: 16%">Qty</th>
+                <th style="width: 16%">SubTotal</th>
+                <th style="width: 16%; text-align:right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="cartBody"></tbody>
+          </table>
+
+          <div class="footer-note">
+            * Ini prototype frontend. Nanti bisa ditambahkan backend (mis. Node/Express atau Laravel) + database MySQL/PostgreSQL.
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-h">
+          <h2>Ringkasan & Pembayaran</h2>
+        </div>
+        <div class="panel-b">
+          <div class="form-control" style="min-width: unset;">
+            <label for="paymentMethod">Metode Pembayaran</label>
+            <select id="paymentMethod">
+              <option value="cash">Cash</option>
+              <option value="qris">QRIS</option>
+              <option value="transfer">Transfer</option>
+            </select>
+          </div>
+
+          <div style="height: 12px"></div>
+
+          <div class="totals">
+            <div class="total-line"><span>Subtotal</span> <strong id="totalSubtotal">Rp 0</strong></div>
+            <div class="total-line"><span>Diskon</span> <strong id="totalDiscount">Rp 0</strong></div>
+            <div class="total-line"><span>PPN (opsional)</span> <strong id="totalTax">Rp 0</strong></div>
+            <div class="total-line" style="font-size: 15px;"><span>Total</span> <strong id="totalPayable">Rp 0</strong></div>
+          </div>
+
+          <div style="height: 14px"></div>
+
+          <div class="form-control" style="min-width: unset;">
+            <label for="cashInput">Uang Diterima (khusus cash)</label>
+            <input id="cashInput" type="number" min="0" value="0" />
+          </div>
+
+          <div class="totals" style="margin-top: 10px;">
+            <div class="total-line"><span>Kembalian</span> <strong id="totalChange">Rp 0</strong></div>
+          </div>
+
+          <div style="height: 14px"></div>
+
+          <div class="side-list">
+            <button class="btn btn-primary" style="width:100%" id="btnPay2">Bayar Sekarang</button>
+          </div>
+
+          <div style="height: 14px"></div>
+
+          <div class="panel" style="border-radius: 14px; background: rgba(255,255,255,0.02);">
+            <div class="panel-h" style="border-bottom: 1px solid var(--border);">
+              <h2 style="margin:0">Riwayat Transaksi (Hari Ini)</h2>
+            </div>
+            <div class="panel-b" style="padding: 12px 12px;">
+              <div id="historyList" style="display:flex; flex-direction:column; gap:10px;"></div>
+              <div class="footer-note" style="margin-top: 10px;">Tersimpan di perangkat Anda.</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
+
